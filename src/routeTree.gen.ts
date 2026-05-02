@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ChallengeRouteImport } from './routes/challenge'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,6 +21,11 @@ import { Route as TradesIdRouteImport } from './routes/trades.$id'
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengeRoute = ChallengeRouteImport.update({
+  id: '/challenge',
+  path: '/challenge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/challenge'
     | '/dashboard'
     | '/trades/$id'
     | '/trades/new'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/challenge'
     | '/dashboard'
     | '/trades/$id'
     | '/trades/new'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/auth'
+    | '/challenge'
     | '/dashboard'
     | '/trades/$id'
     | '/trades/new'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
+  ChallengeRoute: typeof ChallengeRoute
   DashboardRoute: typeof DashboardRoute
   TradesIdRoute: typeof TradesIdRoute
   TradesNewRoute: typeof TradesNewRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenge': {
+      id: '/challenge'
+      path: '/challenge'
+      fullPath: '/challenge'
+      preLoaderRoute: typeof ChallengeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
+  ChallengeRoute: ChallengeRoute,
   DashboardRoute: DashboardRoute,
   TradesIdRoute: TradesIdRoute,
   TradesNewRoute: TradesNewRoute,
