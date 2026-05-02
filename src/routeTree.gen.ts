@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChallengeRouteImport } from './routes/challenge'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -18,6 +19,11 @@ import { Route as TradesIndexRouteImport } from './routes/trades.index'
 import { Route as TradesNewRouteImport } from './routes/trades.new'
 import { Route as TradesIdRouteImport } from './routes/trades.$id'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/settings': typeof SettingsRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
   '/trades/': typeof TradesIndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/settings': typeof SettingsRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
   '/trades': typeof TradesIndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/settings': typeof SettingsRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
   '/trades/': typeof TradesIndexRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/challenge'
     | '/dashboard'
+    | '/settings'
     | '/trades/$id'
     | '/trades/new'
     | '/trades/'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/challenge'
     | '/dashboard'
+    | '/settings'
     | '/trades/$id'
     | '/trades/new'
     | '/trades'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/challenge'
     | '/dashboard'
+    | '/settings'
     | '/trades/$id'
     | '/trades/new'
     | '/trades/'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ChallengeRoute: typeof ChallengeRoute
   DashboardRoute: typeof DashboardRoute
+  SettingsRoute: typeof SettingsRoute
   TradesIdRoute: typeof TradesIdRoute
   TradesNewRoute: typeof TradesNewRoute
   TradesIndexRoute: typeof TradesIndexRoute
@@ -136,6 +149,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ChallengeRoute: ChallengeRoute,
   DashboardRoute: DashboardRoute,
+  SettingsRoute: SettingsRoute,
   TradesIdRoute: TradesIdRoute,
   TradesNewRoute: TradesNewRoute,
   TradesIndexRoute: TradesIndexRoute,
