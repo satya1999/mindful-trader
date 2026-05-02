@@ -14,7 +14,180 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      no_trade_days: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          default_market: string | null
+          default_risk_pct: number | null
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_market?: string | null
+          default_risk_pct?: number | null
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_market?: string | null
+          default_risk_pct?: number | null
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      streaks: {
+        Row: {
+          challenge_started_at: string | null
+          current_streak: number
+          last_active_day: string | null
+          longest_streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_started_at?: string | null
+          current_streak?: number
+          last_active_day?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_started_at?: string | null
+          current_streak?: number
+          last_active_day?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trades: {
+        Row: {
+          asset: string
+          closed_at: string | null
+          confidence: number
+          created_at: string
+          direction: string
+          emotion_after: string | null
+          emotion_before: string
+          entry_price: number
+          entry_screenshot_path: string | null
+          exit_price: number | null
+          exit_screenshot_path: string | null
+          followed_plan: boolean | null
+          id: string
+          market: string
+          notes: string | null
+          pnl: number | null
+          position_size: number
+          reason: string
+          risk_pct: number | null
+          session: string | null
+          setup: string
+          status: string
+          stop_loss: number
+          strategy: string | null
+          tag: string | null
+          take_profit: number
+          timeframe: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asset: string
+          closed_at?: string | null
+          confidence: number
+          created_at?: string
+          direction: string
+          emotion_after?: string | null
+          emotion_before: string
+          entry_price: number
+          entry_screenshot_path?: string | null
+          exit_price?: number | null
+          exit_screenshot_path?: string | null
+          followed_plan?: boolean | null
+          id?: string
+          market: string
+          notes?: string | null
+          pnl?: number | null
+          position_size: number
+          reason: string
+          risk_pct?: number | null
+          session?: string | null
+          setup: string
+          status?: string
+          stop_loss: number
+          strategy?: string | null
+          tag?: string | null
+          take_profit: number
+          timeframe?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asset?: string
+          closed_at?: string | null
+          confidence?: number
+          created_at?: string
+          direction?: string
+          emotion_after?: string | null
+          emotion_before?: string
+          entry_price?: number
+          entry_screenshot_path?: string | null
+          exit_price?: number | null
+          exit_screenshot_path?: string | null
+          followed_plan?: boolean | null
+          id?: string
+          market?: string
+          notes?: string | null
+          pnl?: number | null
+          position_size?: number
+          reason?: string
+          risk_pct?: number | null
+          session?: string | null
+          setup?: string
+          status?: string
+          stop_loss?: number
+          strategy?: string | null
+          tag?: string | null
+          take_profit?: number
+          timeframe?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
