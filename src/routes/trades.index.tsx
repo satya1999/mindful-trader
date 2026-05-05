@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { fmtMoney, EMOTION_LABEL } from "@/lib/trade";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter } from "lucide-react";
@@ -18,17 +19,9 @@ export const Route = createFileRoute("/trades/")({
 
 function TradesList() {
   const { user } = useAuth();
-  const [trades, setTrades] = useState<any[]>([]);
+  const trades = useQuery(api.trades.list) || [];
   const [status, setStatus] = useState<string>("all");
   const [market, setMarket] = useState<string>("all");
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data } = await supabase.from("trades").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
-      setTrades(data ?? []);
-    })();
-  }, [user]);
 
   const filtered = trades.filter((t) =>
     (status === "all" || t.status === status) && (market === "all" || t.market === market)
@@ -83,15 +76,15 @@ function TradesList() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((t) => (
-                <tr key={t.id} className="border-b border-border/30 hover:bg-card/40 transition">
-                  <td className="px-4 py-3 text-muted-foreground">{new Date(t.created_at).toLocaleDateString()}</td>
+              {filtered.map((t: any) => (
+                <tr key={t._id} className="border-b border-border/30 hover:bg-card/40 transition">
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(t._creationTime).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
-                    <Link to="/trades/$id" params={{ id: t.id }} className="font-medium hover:text-primary">{t.asset}</Link>
+                    <Link to="/trades/$id" params={{ id: t._id }} className="font-medium hover:text-primary">{t.asset}</Link>
                     <div className="text-xs text-muted-foreground uppercase">{t.market}</div>
                   </td>
                   <td className={"px-4 py-3 uppercase text-xs font-medium " + (t.direction === "buy" ? "text-success" : "text-destructive")}>{t.direction}</td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{EMOTION_LABEL[t.emotion_before]}</td>
+                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{EMOTION_LABEL[t.emotionBefore as keyof typeof EMOTION_LABEL]}</td>
                   <td className="px-4 py-3 hidden md:table-cell">
                     <span className={"text-xs px-2 py-0.5 rounded-full " + (t.status === "open" ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground")}>{t.status}</span>
                   </td>

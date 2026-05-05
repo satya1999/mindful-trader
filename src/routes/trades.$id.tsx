@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,11 +23,13 @@ export const Route = createFileRoute("/trades/$id")({
 
 function TradeDetail() {
   const { id } = Route.useParams();
+  const convexId = id as Id<"trades">;
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [trade, setTrade] = useState<any>(null);
-  const [entryUrl, setEntryUrl] = useState<string | null>(null);
-  const [exitUrl, setExitUrl] = useState<string | null>(null);
+  const trade = useQuery(api.trades.get, { id: convexId });
+  const closeTrade = useMutation(api.trades.close);
+  const removeTrade = useMutation(api.trades.remove);
+  
   const [busy, setBusy] = useState(false);
 
   // Close form
@@ -34,23 +38,11 @@ function TradeDetail() {
   const [emotionAfter, setEmotionAfter] = useState<string>("");
   const [notes, setNotes] = useState("");
 
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data } = await supabase.from("trades").select("*").eq("id", id).maybeSingle();
-      setTrade(data);
-      if (data?.entry_screenshot_path) {
-        const { data: s } = await supabase.storage.from("trade-screenshots").createSignedUrl(data.entry_screenshot_path, 3600);
-        setEntryUrl(s?.signedUrl ?? null);
-      }
-      if (data?.exit_screenshot_path) {
-        const { data: s } = await supabase.storage.from("trade-screenshots").createSignedUrl(data.exit_screenshot_path, 3600);
-        setExitUrl(s?.signedUrl ?? null);
-      }
-    })();
-  }, [user, id]);
+  if (trade === undefined) return <div className="text-muted-foreground">Loading…</div>;
+  if (trade === null) return <div className="text-muted-foreground">Trade not found.</div>;
 
-  if (!trade) return <div className="text-muted-foreground">Loading…</div>;
+  const entryUrl = trade.entryUrl;
+  const exitUrl = trade.exitUrl;
 
   const close = async () => {
     if (!exitPrice || followed === null || !emotionAfter) {
@@ -59,20 +51,16 @@ function TradeDetail() {
     }
     setBusy(true);
     try {
-      const pnl = calcPnL(Number(trade.entry_price), parseFloat(exitPrice), Number(trade.position_size), trade.direction);
-      const { error } = await supabase.from("trades").update({
-        status: "closed",
-        exit_price: parseFloat(exitPrice),
+      const pnl = calcPnL(Number(trade.entryPrice), parseFloat(exitPrice), Number(trade.positionSize), trade.direction);
+      await closeTrade({
+        id: convexId,
+        exitPrice: parseFloat(exitPrice),
         pnl,
-        followed_plan: followed,
-        emotion_after: emotionAfter,
+        followedPlan: followed,
+        emotionAfter,
         notes,
-        closed_at: new Date().toISOString(),
-      }).eq("id", id);
-      if (error) throw error;
+      });
       toast.success("Trade closed.");
-      const { data } = await supabase.from("trades").select("*").eq("id", id).maybeSingle();
-      setTrade(data);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -82,7 +70,7 @@ function TradeDetail() {
 
   const remove = async () => {
     if (!confirm("Delete this trade? This cannot be undone.")) return;
-    await supabase.from("trades").delete().eq("id", id);
+    await removeTrade({ id: convexId });
     toast.success("Trade deleted.");
     navigate({ to: "/trades" });
   };
@@ -102,7 +90,7 @@ function TradeDetail() {
               <span className={"text-xs uppercase px-2 py-0.5 rounded-full " + (trade.direction === "buy" ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive")}>{trade.direction}</span>
               <span className="text-xs uppercase px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{trade.market}</span>
             </div>
-            <div className="text-sm text-muted-foreground mt-1">{new Date(trade.created_at).toLocaleString()}</div>
+            <div className="text-sm text-muted-foreground mt-1">{new Date(trade._creationTime).toLocaleString()}</div>
           </div>
           {trade.status === "closed" && (
             <div className="text-right">
@@ -113,10 +101,10 @@ function TradeDetail() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-          <Stat label="Entry" value={trade.entry_price} />
-          <Stat label="Stop loss" value={trade.stop_loss} />
-          <Stat label="Take profit" value={trade.take_profit} />
-          <Stat label="Size" value={trade.position_size} />
+          <Stat label="Entry" value={trade.entryPrice} />
+          <Stat label="Stop loss" value={trade.stopLoss} />
+          <Stat label="Take profit" value={trade.takeProfit} />
+          <Stat label="Size" value={trade.positionSize} />
         </div>
       </div>
 
@@ -125,7 +113,7 @@ function TradeDetail() {
         <Row label="Reason" value={trade.reason} />
         <Row label="Setup" value={trade.setup} />
         <Row label="Confidence" value={`${trade.confidence}/10`} />
-        <Row label="Emotion" value={EL[trade.emotion_before]} />
+        <Row label="Emotion" value={EL[trade.emotionBefore as keyof typeof EL]} />
         {trade.tag && <Row label="Tag" value={trade.tag.replace("_", " ")} />}
       </div>
 
@@ -167,9 +155,9 @@ function TradeDetail() {
       ) : (
         <div className="glass rounded-2xl p-6 space-y-3">
           <h2 className="font-semibold">Post-trade</h2>
-          <Row label="Exit price" value={trade.exit_price} />
-          <Row label="Followed plan" value={trade.followed_plan ? "Yes ✓" : "No ✗"} />
-          <Row label="Emotion after" value={EL[trade.emotion_after]} />
+          <Row label="Exit price" value={trade.exitPrice} />
+          <Row label="Followed plan" value={trade.followedPlan ? "Yes ✓" : "No ✗"} />
+          <Row label="Emotion after" value={EL[trade.emotionAfter as keyof typeof EL]} />
           {trade.notes && <Row label="Notes" value={trade.notes} />}
         </div>
       )}

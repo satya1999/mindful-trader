@@ -1,39 +1,28 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { ConvexAuthProvider, useAuthActions, useConvexAuth } from "@convex-dev/auth/react";
+import { ConvexReactClient, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { ReactNode } from "react";
 
-interface AuthCtx {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signOut: () => Promise<void>;
-}
-
-const Ctx = createContext<AuthCtx>({ user: null, session: null, loading: true, signOut: async () => {} });
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
   return (
-    <Ctx.Provider value={{ user, session, loading, signOut: async () => { await supabase.auth.signOut(); } }}>
+    <ConvexAuthProvider client={convex}>
       {children}
-    </Ctx.Provider>
+    </ConvexAuthProvider>
   );
 }
 
-export const useAuth = () => useContext(Ctx);
+export function useAuth() {
+  const { isLoading, isAuthenticated } = useConvexAuth();
+  const { signOut } = useAuthActions();
+  
+  const user = useQuery(api.users.current);
+  
+  return {
+    user: isAuthenticated && user ? user : null,
+    session: isAuthenticated ? {} : null,
+    loading: isLoading,
+    signOut,
+  };
+}
