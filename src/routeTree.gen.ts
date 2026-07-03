@@ -10,18 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as JournalRouteImport } from './routes/journal'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ChallengeRouteImport } from './routes/challenge'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TradesIndexRouteImport } from './routes/trades.index'
+import { Route as AccountsIndexRouteImport } from './routes/accounts.index'
 import { Route as TradesNewRouteImport } from './routes/trades.new'
 import { Route as TradesIdRouteImport } from './routes/trades.$id'
+import { Route as AccountsConnectRouteImport } from './routes/accounts.connect'
+import { Route as AccountsIdRouteImport } from './routes/accounts.$id'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalRoute = JournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -34,6 +45,11 @@ const ChallengeRoute = ChallengeRouteImport.update({
   path: '/challenge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -42,6 +58,11 @@ const AuthRoute = AuthRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -54,6 +75,11 @@ const TradesIndexRoute = TradesIndexRouteImport.update({
   path: '/trades/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountsIndexRoute = AccountsIndexRouteImport.update({
+  id: '/accounts/',
+  path: '/accounts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TradesNewRoute = TradesNewRouteImport.update({
   id: '/trades/new',
   path: '/trades/new',
@@ -64,86 +90,138 @@ const TradesIdRoute = TradesIdRouteImport.update({
   path: '/trades/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountsConnectRoute = AccountsConnectRouteImport.update({
+  id: '/accounts/connect',
+  path: '/accounts/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsIdRoute = AccountsIdRouteImport.update({
+  id: '/accounts/$id',
+  path: '/accounts/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/accounts/$id': typeof AccountsIdRoute
+  '/accounts/connect': typeof AccountsConnectRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
+  '/accounts/': typeof AccountsIndexRoute
   '/trades/': typeof TradesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/accounts/$id': typeof AccountsIdRoute
+  '/accounts/connect': typeof AccountsConnectRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
+  '/accounts': typeof AccountsIndexRoute
   '/trades': typeof TradesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
   '/challenge': typeof ChallengeRoute
   '/dashboard': typeof DashboardRoute
+  '/journal': typeof JournalRoute
   '/settings': typeof SettingsRoute
+  '/accounts/$id': typeof AccountsIdRoute
+  '/accounts/connect': typeof AccountsConnectRoute
   '/trades/$id': typeof TradesIdRoute
   '/trades/new': typeof TradesNewRoute
+  '/accounts/': typeof AccountsIndexRoute
   '/trades/': typeof TradesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/analytics'
     | '/auth'
+    | '/calendar'
     | '/challenge'
     | '/dashboard'
+    | '/journal'
     | '/settings'
+    | '/accounts/$id'
+    | '/accounts/connect'
     | '/trades/$id'
     | '/trades/new'
+    | '/accounts/'
     | '/trades/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/analytics'
     | '/auth'
+    | '/calendar'
     | '/challenge'
     | '/dashboard'
+    | '/journal'
     | '/settings'
+    | '/accounts/$id'
+    | '/accounts/connect'
     | '/trades/$id'
     | '/trades/new'
+    | '/accounts'
     | '/trades'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/analytics'
     | '/auth'
+    | '/calendar'
     | '/challenge'
     | '/dashboard'
+    | '/journal'
     | '/settings'
+    | '/accounts/$id'
+    | '/accounts/connect'
     | '/trades/$id'
     | '/trades/new'
+    | '/accounts/'
     | '/trades/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
+  CalendarRoute: typeof CalendarRoute
   ChallengeRoute: typeof ChallengeRoute
   DashboardRoute: typeof DashboardRoute
+  JournalRoute: typeof JournalRoute
   SettingsRoute: typeof SettingsRoute
+  AccountsIdRoute: typeof AccountsIdRoute
+  AccountsConnectRoute: typeof AccountsConnectRoute
   TradesIdRoute: typeof TradesIdRoute
   TradesNewRoute: typeof TradesNewRoute
+  AccountsIndexRoute: typeof AccountsIndexRoute
   TradesIndexRoute: typeof TradesIndexRoute
 }
 
@@ -154,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal': {
+      id: '/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -170,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChallengeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -182,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -198,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TradesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accounts/': {
+      id: '/accounts/'
+      path: '/accounts'
+      fullPath: '/accounts/'
+      preLoaderRoute: typeof AccountsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trades/new': {
       id: '/trades/new'
       path: '/trades/new'
@@ -212,18 +318,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TradesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accounts/connect': {
+      id: '/accounts/connect'
+      path: '/accounts/connect'
+      fullPath: '/accounts/connect'
+      preLoaderRoute: typeof AccountsConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/$id': {
+      id: '/accounts/$id'
+      path: '/accounts/$id'
+      fullPath: '/accounts/$id'
+      preLoaderRoute: typeof AccountsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
+  CalendarRoute: CalendarRoute,
   ChallengeRoute: ChallengeRoute,
   DashboardRoute: DashboardRoute,
+  JournalRoute: JournalRoute,
   SettingsRoute: SettingsRoute,
+  AccountsIdRoute: AccountsIdRoute,
+  AccountsConnectRoute: AccountsConnectRoute,
   TradesIdRoute: TradesIdRoute,
   TradesNewRoute: TradesNewRoute,
+  AccountsIndexRoute: AccountsIndexRoute,
   TradesIndexRoute: TradesIndexRoute,
 }
 export const routeTree = rootRouteImport
